@@ -28,8 +28,8 @@ fn match_input(devices:&mut Vec<Device>){
                 match device_type.unwrap() {
                     "seven_segment" => {
                         let name = arguments.next();
-                        if name.is_some() {
-                            devices.push(Device::SevenSegment(SevenSegment::new(name.unwrap())));
+                        if let Some(value) = name {
+                            devices.push(Device::SevenSegment(SevenSegment::new(value)));
                         }else {
                             println!("Wrong arguments! No name found! Enter help for more info.");
                         }
