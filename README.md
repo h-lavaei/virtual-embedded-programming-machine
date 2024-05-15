@@ -12,3 +12,6 @@ Things that have been added :
 
 Seven Segment device
 making/editing/deleting/listing new devices
+
+
+this tool has been licensed under GPL3
