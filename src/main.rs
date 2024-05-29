@@ -1,11 +1,16 @@
 mod seven_segment;
 mod devices;
+mod named_pipe;
 
-use std::io::stdin;
+use std::fs;
+use std::io::{stdin, Write};
 use crate::devices::Device;
-use crate::seven_segment::SevenSegment;
 
 fn main() {
+    let remove_tmp = fs::remove_dir_all("/tmp/VEPM/");
+    if remove_tmp.is_ok(){
+        remove_tmp.unwrap();
+    }
     let mut devices:Vec<Device> = Vec::new();
     loop {
         println!("Enter a command ..");
@@ -22,54 +27,9 @@ fn match_input(devices:&mut Vec<Device>){
     let mut arguments = input.split_ascii_whitespace();
     let action = arguments.next().unwrap_or("list");
     match action.trim() {
-        "add" => {
-            let device_type = arguments.next();
-            if device_type.is_some(){
-                match device_type.unwrap() {
-                    "seven_segment" => {
-                        let name = arguments.next();
-                        if let Some(value) = name {
-                            devices.push(Device::SevenSegment(SevenSegment::new(value)));
-                        }else {
-                            println!("Wrong arguments! No name found! Enter help for more info.");
-                        }
-                    }
-                    _ => {println!("Device type not found")}
-                }
-            }else {
-                println!("Wrong arguments! No device type found! Enter help for more info.");
-            }
-        },
-        "edit" => {
-            let name = arguments.next();
-            if name.is_some() {
-                let device = devices.iter_mut().find(|device| device.name() == name.unwrap());
-                if device.is_some() {
-                    let device: &mut Device = device.unwrap();
-                    let change = arguments.next();
-                    if change.is_some(){
-                        let change = change.unwrap();
-                        if device.edit(change).is_err(){
-                            println!("Wrong argument {}. Enter help for more info.",change);
-                        }
-                    }else {
-                        println!("Wrong argument! no changing found! Enter help for more info.");
-                    }
-                } else {
-                    println!("Device not found!");
-                }
-            }else {
-                println!("Device not found!");
-            }
-        },
-        "remove" => {
-            let name = arguments.next();
-            if name.is_some(){
-                let device = devices.iter().find(|device| device.name() == name.unwrap()).unwrap();
-                let device_pos = devices.iter().position(|x| x.name() == device.name());
-                devices.remove(device_pos.unwrap());
-            }
-        },
+        "add" => devices::add(&mut arguments,devices),
+        "edit" => devices::edit(&mut arguments,devices),
+        "remove" => devices::remove(&mut arguments,devices),
         "list" => {devices.iter().for_each(move |device| device.print())},
         "help" => {println!("add a new device : add device_type name\nedit a device : edit name change\nlist devices : list\nhelp : help")},
         "exit" => {std::process::exit(0)}

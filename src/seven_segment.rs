@@ -5,6 +5,7 @@ pub struct SevenSegment {
     pub name:String,
     pub leds:[bool;8],
 }
+
 impl SevenSegment {
     pub fn new(name:&str) -> SevenSegment{
         SevenSegment{
@@ -89,5 +90,16 @@ impl SevenSegment {
                if self.leds[3] { "-----".red() } else { "-----".white() },
                if self.leds[7] { ".".red() } else { ".".white() },
         );
+    }
+    pub fn get_data(&self) -> Box<[u8]>{
+        let mut byte:u8 = 0;
+        let mut i:u8 = 0;
+        for led in self.leds{
+            if led {
+                byte += 2_u8.pow(i as u32);
+            }
+            i += 1;
+        }
+        Box::new([byte])
     }
 }
