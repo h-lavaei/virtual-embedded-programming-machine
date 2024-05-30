@@ -16,5 +16,3 @@ making/editing/deleting/listing new devices
 
 this tool has been licensed under GPL3
 
-
-this tool has been licensed under GPL3
